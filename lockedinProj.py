@@ -7,7 +7,6 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
 from scipy import stats
 
-ch_names = ['Fz', 'C3', 'Cz', 'C4', 'CP1', 'CPz', 'CP2', 'Pz']
 
 FILES = {
     'P1_high1': r'D:\Users\Utilizator\Desktop\neuro\P1_high1.mat',
