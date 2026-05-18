@@ -23,7 +23,6 @@ FILES = {
 
 
 def load_epochs(path, t_min_ms=-100, t_max_ms=700):
-    """Extract baseline-corrected epochs around each stimulus onset."""
     mat = sio.loadmat(path)
     fs   = int(mat['fs'].flat[0])
     y    = mat['y']         
@@ -53,12 +52,6 @@ def load_epochs(path, t_min_ms=-100, t_max_ms=700):
 
 
 def lda_classify(epochs, n_splits=5, random_state=42):
-    """
-    5-fold cross-validated LDA on flattened epochs.
-    Classifies attended (nontarget) vs unattended (distractor).
-    Balances classes by downsampling distractor trials.
-    Returns mean accuracy AND per-fold accuracies for variability analysis.
-    """
     X_pos = epochs['nontarget'].reshape(len(epochs['nontarget']), -1)
     X_neg = epochs['distractor'].reshape(len(epochs['distractor']), -1)
 
@@ -76,10 +69,6 @@ def lda_classify(epochs, n_splits=5, random_state=42):
 
 
 def p300_snr(epochs, time_ms, ch=2, t_min=250, t_max=500):
-    """
-    Peak P300 SNR at electrode `ch` (default=Cz, index 2).
-    Returns: SNR (µV), nontarget peak, distractor peak
-    """
     win = (time_ms >= t_min) & (time_ms <= t_max)
     nt_erp  = epochs['nontarget'][:, win, ch].mean(axis=0)
     dist_erp = epochs['distractor'][:, win, ch].mean(axis=0)
@@ -90,10 +79,6 @@ def p300_snr(epochs, time_ms, ch=2, t_min=250, t_max=500):
 
 
 def baseline_noise(epochs, t_min_ms=-100, fs=256):
-    """
-    RMS amplitude of the pre-stimulus baseline across nontarget trials.
-    High noise → poor signal quality → lower expected accuracy.
-    """
     bl_samples = int(abs(t_min_ms) / 1000 * fs)
     nt = epochs['nontarget'][:, :bl_samples, :]   
     return nt.std(axis=(0, 1)).mean()              
@@ -101,7 +86,6 @@ def baseline_noise(epochs, t_min_ms=-100, fs=256):
 
 
 def p300_latency(epochs, time_ms, ch=2, t_min=200, t_max=600):
-    """Latency of the peak nontarget ERP in the P300 window at Cz."""
     win = (time_ms >= t_min) & (time_ms <= t_max)
     erp = epochs['nontarget'][:, win, ch].mean(axis=0)
     return time_ms[win][erp.argmax()]
@@ -109,10 +93,6 @@ def p300_latency(epochs, time_ms, ch=2, t_min=200, t_max=600):
 
 
 def cohens_d(epochs, time_ms, ch=2, t_min=250, t_max=500):
-    """
-    Cohen's d for nontarget vs distractor mean amplitude in P300 window.
-    Effect size independent of trial count — comparable across sessions.
-    """
     win = (time_ms >= t_min) & (time_ms <= t_max)
     nt   = epochs['nontarget'][:, win, ch].mean(axis=1)  
     dist = epochs['distractor'][:, win, ch].mean(axis=1)
