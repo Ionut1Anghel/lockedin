@@ -146,7 +146,7 @@ metrics  = ['acc', 'snr', 'cohens_d', 'noise']
 labels   = ['LDA Accuracy (%)', 'P300 SNR (µV)', "Cohen's d", 'Baseline Noise (µV)']
 
 fig, axes = plt.subplots(2, 4, figsize=(16, 7))
-fig.suptitle('High vs Low Session Comparison — What Drives Accuracy?', fontsize=13, fontweight='bold')
+fig.suptitle('High vs Low Session Comparison', fontsize=13, fontweight='bold')
 
 for row, patient in enumerate(patients):
     high_keys = [k for k in results if k.startswith(patient) and 'high' in k]
